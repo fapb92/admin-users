@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -107,5 +111,12 @@ return [
     */
 
     'password_timeout' => 10800,
+
+    'passport' => [
+        'password_grant_client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+        'personal_access_client_id' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_ID'),
+        'expiration_time_refresh_token' => env('PASSPORT_EXPIRATION_TIME_REFRESH_TOKEN', 120),
+        'expiration_time_token' => env('PASSPORT_EXPIRATION_TIME_TOKEN', 60),
+    ],
 
 ];

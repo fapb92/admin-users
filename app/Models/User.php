@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -65,6 +65,15 @@ class User extends Authenticatable implements MustVerifyEmail
             'code' => str()->random(40),
             'rovoked_at' => now()->addHours(1),
         ]);
+
+        if ($code->isRevoked()) {
+            $code =  $this->verification_email_code()->updateOrCreate([
+                'user_id' => $this->id,
+            ], [
+                'code' => str()->random(40),
+                'rovoked_at' => now()->addHours(1),
+            ]);
+        }
 
         return $code;
     }

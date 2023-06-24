@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -17,3 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('signup', [RegisterController::class, 'store']);
 Route::get('verification/email/{vcode}/{hash}', [VerifyEmailController::class, 'verify']);
+Route::get('verification/email/resend', [VerifyEmailController::class, 'resend_email'])->middleware('auth:api');
+
+Route::post('login', [LoginController::class, 'login']);

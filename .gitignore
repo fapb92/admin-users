@@ -19,3 +19,4 @@ yarn-error.log
 /.vscode
 ._*
 .DS_Store
+.rnd
