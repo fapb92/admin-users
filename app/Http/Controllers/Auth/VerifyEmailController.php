@@ -55,7 +55,7 @@ class VerifyEmailController extends Controller
         $this->tokenRepository->revokeAccessToken($tokenId);
 
         return response()->json([
-            'message' => 'Se ha enviado un nuevo correo de verificación'
+            'message' => 'Se ha enviado un nuevo correo de verificación, por favor revisa tu correo'
         ], 200);
     }
 }
