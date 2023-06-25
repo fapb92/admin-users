@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,6 @@ Route::get('verification/email/{vcode}/{hash}', [VerifyEmailController::class, '
 Route::get('verification/email/resend', [VerifyEmailController::class, 'resend_email'])->middleware('auth:api');
 
 Route::post('login', [LoginController::class, 'login']);
+
+Route::post('password/reset/send', [ResetPasswordController::class, 'sentEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'reset'])->name('password.reset');

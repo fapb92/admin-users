@@ -33,5 +33,6 @@ return [
 
     'user_admin'=>[
         'front'=>env('USER_ADMIN_FRONT'),
+        'reset_password'=>env('FRONT_RESET_PASSWORD_ENDPOINT')
     ]
 ];
