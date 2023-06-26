@@ -49,6 +49,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'password' => Hashed::class,
     ];
 
+    protected $appends=[
+        'avatar_url'
+    ];
+
     public function verification_email_code()
     {
         return $this->hasOne(VerificationEmailCode::class);

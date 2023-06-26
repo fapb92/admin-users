@@ -28,7 +28,7 @@ class LoginController extends Controller
         $user = $request->user();
 
         if (!$user->hasVerifiedEmail()) {
-            $client = $this->clientRepository->find($this->personal_access_client_id);;
+            $client = $this->clientRepository->find($this->personal_access_client_id);
             $body = [
                 "grant_type" => 'personal_access',
                 "client_id" => $client->id,

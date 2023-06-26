@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,9 @@ Route::post('login', [LoginController::class, 'login']);
 
 Route::post('password/reset/send', [ResetPasswordController::class, 'sentEmail'])->name('password.email');
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'reset'])->name('password.reset');
+
+Route::group([
+    'middleware' => 'auth:api',
+], function () {
+    Route::get('user', [UserController::class, 'index']);
+});
