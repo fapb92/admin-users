@@ -34,4 +34,5 @@ Route::group([
     'middleware' => 'auth:api',
 ], function () {
     Route::get('user', [UserController::class, 'index']);
+    Route::get('logput', [TokenController::class, 'logout']);
 });

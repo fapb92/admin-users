@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\RefreshTokenRepository;
+use Laravel\Passport\TokenRepository;
 
 class TokenController extends Controller
 {
@@ -11,10 +14,19 @@ class TokenController extends Controller
 
     protected $refresh_token_exp_time;
 
+    protected $tokenRepository;
+
+    protected $refreshTokenRepository;
+
+    protected $refresh_token_cookie_name;
+
     public function __construct(protected ClientRepository $clientRepository)
     {
         $this->password_client_id = config('auth.passport.password_grant_client_id');
         $this->refresh_token_exp_time = config('auth.passport.expiration_time.refresh_token');
+        $this->refreshTokenRepository = app(RefreshTokenRepository::class);
+        $this->tokenRepository = app(TokenRepository::class);
+        $this->refresh_token_cookie_name = 'refresh_token';
     }
 
     public function refresh(Request $request)
@@ -29,16 +41,27 @@ class TokenController extends Controller
             "client_secret" => $client->secret,
             'scope' => '',
         ];
-        $response = json_decode(app()->handle(Request::create('/oauth/token', 'POST', $body))->content());
+        $response = app()->handle(Request::create('/oauth/token', 'POST', $body));
 
-        // dd($response);
+        $contentResponse = json_decode($response->getContent(), true);
+        if ($response->getStatusCode() >= 400) {
+            throw new HttpResponseException(response()->json($contentResponse, $response->getStatusCode())->withoutCookie($this->refresh_token_cookie_name));
+        }
+
+        return response()->json($contentResponse, 200)->withCookie(cookie($this->refresh_token_cookie_name, $response->refresh_token, $this->refresh_token_exp_time));
+    }
+
+    public function logout(Request $request)
+    {
+        $tokenId = $request->user()->token()->id;
+
+        $this->tokenRepository->revokeAccessToken($tokenId);
+
+        $this->refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
+
 
         return response()->json([
-            'status' => 1,
-            'message' => 'refresh token',
-            'token_type' => $response->token_type,
-            'expires_in' => $response->expires_in,
-            'access_token' => $response->access_token,
-        ], 200)->withCookie(cookie('refresh_token', $response->refresh_token, $this->refresh_token_exp_time));
+            'message' => "Se cerró sesión exitosamente",
+        ])->withoutCookie($this->refresh_token_cookie_name);
     }
 }
