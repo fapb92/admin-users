@@ -49,9 +49,14 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'password' => Hashed::class,
     ];
 
-    protected $appends=[
+    protected $appends = [
         'avatar_url'
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 
     public function verification_email_code()
     {
@@ -127,5 +132,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function getEmailForVerification()
     {
         return $this->email;
+    }
+
+    public function rolesCreated()
+    {
+        return Role::where('user_id', $this->id)->get();
     }
 }
