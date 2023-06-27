@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TokenController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,4 +37,14 @@ Route::group([
 ], function () {
     Route::get('user', [UserController::class, 'index']);
     Route::get('logput', [TokenController::class, 'logout']);
+
+    Route::group([
+        'prefix' => 'role',
+        'controller' => RoleController::class,
+    ], function () {
+        Route::get('list', 'index');
+        Route::get('{role}', 'show');
+    });
+    
+    Route::get('user/permissions', [PermissionController::class, 'index']);
 });

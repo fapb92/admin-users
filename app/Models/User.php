@@ -53,14 +53,90 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'avatar_url'
     ];
 
+    /**
+     * Save all currente permission
+     * @var array
+     */
+    protected $currentPermissions = [];
+
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->withPivot('active')->withTimestamps();
     }
 
     public function verification_email_code()
     {
         return $this->hasOne(VerificationEmailCode::class);
+    }
+
+    public function getActiveRole()
+    {
+        return $this->roles()->wherePivot('active', true)->first();
+    }
+
+    public function getCurretPermissions()
+    {
+        if (!!$this->currentPermissions) {
+            return $this->currentPermissions;
+        }
+
+        
+        if (!$role = $this->getActiveRole()) {
+            return null;
+        }
+        return $this->currentPermissions = $role->permission_list();
+    }
+
+    public function is_ableTo($permission)
+    {
+        return in_array($permission, $this->getCurretPermissions());
+    }
+
+    public function activateRole($role)
+    {
+        $activeRole = $this->getActiveRole();
+        $this->roles()->updateExistingPivot($activeRole->id, ['active' => false]);
+        if (!!$newRole = $this->hasRole($role)) {
+            $this->roles()->updateExistingPivot($newRole->id, ['active' => true]);
+        }
+    }
+
+    public function hasRole($role, $key = 'key')
+    {
+        return $this->roles()->where($key, $role)->first();
+    }
+
+    public function addRole($role, $attributes = [], $key = 'key')
+    {
+        if (!$this->hasRole($role, $key)) {
+            $this->roles()->attach(Role::where($key, $role)->first(), $attributes);
+            return true;
+        }
+        return false;
+    }
+
+    public function newSuperAdmin()
+    {
+        if (!$this->roles->all()) {
+            return $this->addRole("super_admin", ['active' => true]);
+        }
+        return false;
+    }
+
+    public function newAdmin()
+    {
+        if (!$this->roles->all()) {
+            return $this->addRole('admin', ['active' => true]);
+        }
+        return false;
+    }
+
+    public function newUser()
+    {
+        if (!$this->roles->all()) {
+            return $this->addRole('user', ['active' => true]);
+        }
+        return false;
     }
 
     public function get_verification_email_code()

@@ -16,17 +16,21 @@ class Role extends Model
     ];
 
     protected $casts = [
-        'key' => SnakeUpper::class,
         'name' => LowerTitle::class
     ];
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withTimestamps();
+        return $this->belongsToMany(User::class)->withPivot('active')->withTimestamps();
     }
 
     public function permissions()
     {
         return $this->belongsToMany(Permission::class)->withTimestamps();
+    }
+
+    public function permission_list()
+    {
+        return $this->permissions->flatten()->pluck('key')->all();
     }
 }
