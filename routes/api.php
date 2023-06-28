@@ -42,6 +42,7 @@ Route::group([
         'controller' => UserController::class,
     ], function () {
         Route::get('/', 'index');
+        Route::put('/', 'update');
         Route::get('roles', 'show_roles');
         Route::post('role/select', 'select_role');
     });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserSelectRoleRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\ActiveRoleResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
@@ -44,6 +45,16 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Roles',
             'data' => RoleResource::collection($request->user()->roles)
+        ], 200);
+    }
+
+    public function update(UserUpdateRequest $request)
+    {
+        $user = $request->user();
+        $user->update(['name' => $request->name]);
+
+        return response()->json([
+            'message'=>'Usuario actualizado'
         ], 200);
     }
 }
