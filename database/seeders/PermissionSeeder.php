@@ -20,6 +20,7 @@ class PermissionSeeder extends Seeder
             ['key' => 'view_rol_details', 'skey' => 'p-002', 'name' => 'ver detalles de los roles'],
             ['key' => 'view_all_permissions', 'skey' => 'p-003', 'name' => 'Ver todos los permisos'],
             ['key' => 'assign_roles', 'skey' => 'p-004', 'name' => 'Asignar roles'],
+            ['key' => 'remove_roles', 'skey' => 'p-005', 'name' => 'Remover roles'],
         ], ['key'], ['skey', 'name']);
     }
 }

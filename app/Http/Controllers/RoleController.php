@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AssignRoleRequest;
+use App\Http\Requests\RemoveRoleRequest;
 use App\Models\Role;
 use App\Http\Resources\RoleResource;
 use App\Models\User;
@@ -62,5 +63,20 @@ class RoleController extends Controller
             'message' => 'Rol asignado'
         ], 200);
     }
+
+    /**
+     * Assign role to user
+     */
+    public function remove(RemoveRoleRequest $request, User $user)
+    {
+        $adminUser = $request->user();
+        $adminUserRole = $adminUser->getActiveRole();
+        $roleToRemove = Role::where('key', $request->role)->first();
+        if ($roleToRemove->priority >= $adminUserRole->priority) {
+            $user->removeRole($roleToRemove);
+        }
+        return response()->json([
+            'message' => 'Rol retirado'
+        ], 200);
     }
 }

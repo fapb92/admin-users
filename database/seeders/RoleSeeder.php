@@ -25,7 +25,7 @@ class RoleSeeder extends Seeder
         $this->addRole(
             ['key' => 'admin'],
             ['name' => 'Administrador', 'priority' => 2],
-            ['view_all_roles', 'assign_roles']
+            ['view_all_roles', 'assign_roles','remove_roles']
         );
 
         $this->addRole(
