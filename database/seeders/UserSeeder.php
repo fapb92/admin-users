@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             'id' => 2
         ], [
             'name' => fake()->name(),
-            'created_by'=>1,
+            'created_by' => 1,
             'email' => 'admin@email.com',
             'email_verified_at' => now(),
             'password' => '123',
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
         $userU = User::updateOrCreate([
             'id' => 3
         ], [
-            'created_by'=>2,
+            'created_by' => 2,
             'name' => fake()->name(),
             'email' => 'user@email.com',
             'email_verified_at' => now(),
@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
 
         !$isEmptyUsers ?: User::factory(97)->create()->each(function (User $user) {
             $role = fake()->randomElement(['super_admin', 'admin', 'user',]);
-            $user->roles()->attach(Role::where('key', $role)->first());
+            $user->roles()->attach(Role::where('key', $role)->first(), ['active' => true]);
             !($role !== 'user') ?: $user->created_by = 1;
             !($role === 'user') ?: $user->created_by = rand(1, 2);
             !$user->isDirty('created_by') ?: $user->save();

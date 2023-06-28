@@ -14,13 +14,20 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $role = $this->getActiveRole();
         return [
             'id' => $this->id,
             "name" => $this->name,
             "email" => $this->email,
             "register_at" => $this->created_at,
             "last_update" => $this->updated_at,
-            "avatar_url" => $this->avatar_url
+            "avatar_url" => $this->avatar_url,
+            "role" => [
+                'data' => new RoleResource($role),
+                'permisions' => UserPermissionsResource::collection($role->permissions)
+            ],
+
+
         ];
     }
 }
