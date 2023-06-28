@@ -97,8 +97,23 @@ class AdminUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, User $user)
     {
-        //
+        $adminUser = $request->user();
+        $role = $adminUser->getActiveRole();
+
+        $deleted = false;
+        if ($role->priority === 1 || ($role->priority === 2 && $user->created_by === $adminUser->id)) {
+            $user->delete();
+            $deleted = true;
+        }
+
+        if (!$deleted) {
+            abort(404);
+        }
+
+        return response()->json([
+            'message'=>'Usuario eliminado'
+        ], 200);
     }
 }

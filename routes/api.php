@@ -65,5 +65,6 @@ Route::group([
     ], function () {
         Route::post('create', 'store')->middleware('able_to:create_users');
         Route::put('/{user}', 'update')->middleware('able_to:update_users');
+        Route::delete('/{user}', 'destroy')->middleware('able_to:erase_users');
     });
 });
