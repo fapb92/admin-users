@@ -58,5 +58,9 @@ class RoleController extends Controller
         if ($roleToAdd->priority >= $adminUserRole->priority) {
             $user->addRole($roleToAdd);
         }
+        return response()->json([
+            'message' => 'Rol asignado'
+        ], 200);
+    }
     }
 }
