@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -43,7 +44,6 @@ Route::group([
         Route::get('/', 'index');
         Route::get('roles', 'show_roles');
         Route::post('role/select', 'select_role');
-        
     });
 
     Route::group([
@@ -57,4 +57,11 @@ Route::group([
     });
 
     Route::get('permissions', [PermissionController::class, 'index'])->middleware('able_to:view_all_permissions');
+
+    Route::group([
+        'prefix' => 'users',
+        'controller' => AdminUserController::class
+    ], function () {
+        Route::post('create', 'store')->middleware('able_to:create_users');
+    });
 });
