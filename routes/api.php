@@ -36,15 +36,15 @@ Route::group([
     'middleware' => 'auth:api',
 ], function () {
     Route::get('user', [UserController::class, 'index']);
-    Route::get('logput', [TokenController::class, 'logout']);
+    Route::get('logout', [TokenController::class, 'logout']);
 
     Route::group([
         'prefix' => 'role',
         'controller' => RoleController::class,
     ], function () {
-        Route::get('list', 'index');
-        Route::get('{role}', 'show');
+        Route::get('list', 'index')->middleware('able_to:view_all_roles');
+        Route::get('{role}', 'show')->middleware('able_to:view_rol_details');
     });
-    
-    Route::get('user/permissions', [PermissionController::class, 'index']);
+
+    Route::get('user/permissions', [PermissionController::class, 'index'])->middleware('able_to:view_all_permissions');
 });
