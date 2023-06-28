@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
@@ -80,7 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             return $this->currentPermissions;
         }
 
-        
+
         if (!$role = $this->getActiveRole()) {
             return null;
         }
@@ -99,20 +100,45 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         if (!!$newRole = $this->hasRole($role)) {
             $this->roles()->updateExistingPivot($newRole->id, ['active' => true]);
         }
+        $this->currentPermissions = [];
     }
 
     public function hasRole($role, $key = 'key')
     {
-        return $this->roles()->where($key, $role)->first();
+        if (is_string($role)) {
+            return $this->roles()->where($key, $role)->first();
+        }
+        if ($role instanceof Role) {
+            return $this->roles()->where($key, $role->{$key})->first();
+        }
+        throw new HttpResponseException(response()->json([
+            'message' => 'Invalid type role'
+        ], 500));
     }
 
     public function addRole($role, $attributes = [], $key = 'key')
     {
-        if (!$this->hasRole($role, $key)) {
+        if (!!$this->hasRole($role, $key)) {
+            return false;
+        }
+        if (is_string($role)) {
             $this->roles()->attach(Role::where($key, $role)->first(), $attributes);
             return true;
         }
-        return false;
+        if ($role instanceof Role) {
+            $this->roles()->attach($role, $attributes);
+            return true;
+        }
+    }
+
+    public function removeRole($role, $attributes = [], $key = 'key')
+    {
+        if (!$roleToRemove = $this->hasRole($role, $key)) {
+            return false;
+        }
+
+        $this->roles()->detach($roleToRemove, $attributes);
+        return true;
     }
 
     public function newSuperAdmin()

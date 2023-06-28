@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignRoleRequest;
 use App\Models\Role;
 use App\Http\Resources\RoleResource;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -43,5 +45,18 @@ class RoleController extends Controller
             'message' => 'Roles',
             'data' => new RoleResource($role)
         ], 200);
+    }
+
+    /**
+     * Assign role to user
+     */
+    public function assign(AssignRoleRequest $request, User $user)
+    {
+        $adminUser = $request->user();
+        $adminUserRole = $adminUser->getActiveRole();
+        $roleToAdd = Role::where('key', $request->role)->first();
+        if ($roleToAdd->priority >= $adminUserRole->priority) {
+            $user->addRole($roleToAdd);
+        }
     }
 }

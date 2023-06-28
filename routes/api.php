@@ -44,6 +44,7 @@ Route::group([
     ], function () {
         Route::get('list', 'index')->middleware('able_to:view_all_roles');
         Route::get('{role}', 'show')->middleware('able_to:view_rol_details');
+        Route::post('assign/user/{user}', 'assign')->middleware('able_to:assign_roles');
     });
 
     Route::get('user/permissions', [PermissionController::class, 'index'])->middleware('able_to:view_all_permissions');
