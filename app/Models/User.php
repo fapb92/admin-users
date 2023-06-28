@@ -72,7 +72,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 
     public function getActiveRole()
     {
-        return $this->roles()->wherePivot('active', true)->first();
+        if (!$role = $this->roles()->wherePivot('active', true)->first()) {
+            $this->roles()->updateExistingPivot($this->roles[0]->id, ['active' => true]);
+            $role = $this->getActiveRole();
+        }
+        return $role;
     }
 
     public function getCurretPermissions()
@@ -96,11 +100,12 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function activateRole($role)
     {
         $activeRole = $this->getActiveRole();
-        $this->roles()->updateExistingPivot($activeRole->id, ['active' => false]);
         if (!!$newRole = $this->hasRole($role)) {
             $this->roles()->updateExistingPivot($newRole->id, ['active' => true]);
+            $this->roles()->updateExistingPivot($activeRole->id, ['active' => false]);
+            $this->currentPermissions = [];
         }
-        $this->currentPermissions = [];
+        return $newRole;
     }
 
     public function hasRole($role, $key = 'key')
