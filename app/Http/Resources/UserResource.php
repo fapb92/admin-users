@@ -23,8 +23,7 @@ class UserResource extends JsonResource
             "last_update" => $this->updated_at,
             "avatar_url" => $this->avatar_url,
             "role" => [
-                'data' => new RoleResource($role),
-                'permisions' => UserPermissionsResource::collection($role->permissions)
+                'data' => new ActiveRoleResource($role)
             ],
 
 

@@ -35,8 +35,16 @@ Route::get('token/refresh', [TokenController::class, 'refresh'])->middleware('to
 Route::group([
     'middleware' => 'auth:api',
 ], function () {
-    Route::get('user', [UserController::class, 'index']);
     Route::get('logout', [TokenController::class, 'logout']);
+    Route::group([
+        'prefix' => 'user',
+        'controller' => UserController::class,
+    ], function () {
+        Route::get('/', 'index');
+        Route::get('roles', 'show_roles');
+        Route::post('role/select', 'select_role');
+        
+    });
 
     Route::group([
         'prefix' => 'role',
@@ -48,5 +56,5 @@ Route::group([
         Route::post('remove/user/{user}', 'remove')->middleware('able_to:remove_roles');
     });
 
-    Route::get('user/permissions', [PermissionController::class, 'index'])->middleware('able_to:view_all_permissions');
+    Route::get('permissions', [PermissionController::class, 'index'])->middleware('able_to:view_all_permissions');
 });
