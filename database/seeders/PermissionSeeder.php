@@ -22,6 +22,7 @@ class PermissionSeeder extends Seeder
             ['key' => 'assign_roles', 'skey' => 'p-004', 'name' => 'Asignar roles'],
             ['key' => 'remove_roles', 'skey' => 'p-005', 'name' => 'Remover roles'],
             ['key' => 'create_users', 'skey' => 'p-006', 'name' => 'Crear usuarios'],
+            ['key' => 'update_users', 'skey' => 'p-007', 'name' => 'Actualizar usuarios'],
         ], ['key'], ['skey', 'name']);
     }
 }

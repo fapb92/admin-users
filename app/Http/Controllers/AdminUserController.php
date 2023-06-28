@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminUserStoreRequest;
+use App\Http\Requests\AdminUserUpdateRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
@@ -16,7 +18,6 @@ class AdminUserController extends Controller
      */
     public function index()
     {
-        
     }
 
     /**
@@ -67,9 +68,27 @@ class AdminUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(AdminUserUpdateRequest $request, User $user)
     {
-        //
+        $adminUser = $request->user();
+        $role = $adminUser->getActiveRole();
+
+        $updated = false;
+        if ($role->priority === 1) {
+            $user->update(['name' => $request->name]);
+            $updated = true;
+        } elseif ($role->priority === 2 && $user->created_by === $adminUser->id) {
+            $user->update(['name' => $request->name]);
+            $updated = true;
+        }
+
+        if (!$updated) {
+            abort(404);
+        }
+
+        return response()->json([
+            'message'=>'Usuario actualizado'
+        ], 200);
     }
 
     /**

@@ -64,5 +64,6 @@ Route::group([
         'controller' => AdminUserController::class
     ], function () {
         Route::post('create', 'store')->middleware('able_to:create_users');
+        Route::put('/{user}', 'update')->middleware('able_to:update_users');
     });
 });
