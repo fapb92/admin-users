@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserSelectRoleRequest;
 use App\Http\Resources\ActiveRoleResource;
+use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 
@@ -39,14 +39,11 @@ class UserController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
+    public function show_roles(Request $request)
     {
-        //
+        return response()->json([
+            'message' => 'Roles',
+            'data' => RoleResource::collection($request->user()->roles)
+        ], 200);
     }
 }
