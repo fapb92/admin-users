@@ -19,13 +19,19 @@ class RoleSeeder extends Seeder
         $this->addRole(
             ['key' => 'super_admin'],
             ['name' => 'Super Administrador', 'priority' => 1],
-            ['view_all_roles', 'view_all_permissions']
+            ['view_all_roles', 'view_all_permissions', 'view_rol_details']
         );
 
         $this->addRole(
             ['key' => 'admin'],
             ['name' => 'Administrador', 'priority' => 2],
-            ['view_all_roles']
+            []
+        );
+
+        $this->addRole(
+            ['key' => 'user'],
+            ['name' => 'User', 'priority' => 3],
+            []
         );
     }
 
