@@ -24,6 +24,8 @@ class PermissionSeeder extends Seeder
             ['key' => 'create_users', 'skey' => 'p-006', 'name' => 'Crear usuarios'],
             ['key' => 'update_users', 'skey' => 'p-007', 'name' => 'Actualizar usuarios'],
             ['key' => 'erase_users', 'skey' => 'p-008', 'name' => 'Borrar usuarios'],
+            ['key' => 'view_all_user', 'skey' => 'p-009', 'name' => 'Ver todos los usuarios'],
+            ['key' => 'view_user_details', 'skey' => 'p-010', 'name' => 'Ver información de usuario'],
         ], ['key'], ['skey', 'name']);
     }
 }

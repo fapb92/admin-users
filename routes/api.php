@@ -63,6 +63,7 @@ Route::group([
         'prefix' => 'users',
         'controller' => AdminUserController::class
     ], function () {
+        Route::get('/', 'index')->middleware('able_to:view_all_user');
         Route::post('create', 'store')->middleware('able_to:create_users');
         Route::put('/{user}', 'update')->middleware('able_to:update_users');
         Route::delete('/{user}', 'destroy')->middleware('able_to:erase_users');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminUserStoreRequest;
 use App\Http\Requests\AdminUserUpdateRequest;
+use App\Http\Resources\UserListResource;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -16,8 +17,19 @@ class AdminUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $adminUser = $request->user();
+        $role = $adminUser->getActiveRole();
+        $perpage = 15;
+        if ($role->priority === 1) {
+            $users = User::with(['roles'])->paginate($perpage);
+        } elseif ($role->priority === 2) {
+            $users = User::with(['roles'])->where('created_by', $adminUser->id)->paginate($perpage);
+        } elseif ($role->priority === 3) {
+            $users = User::with(['roles'])->where('created_by', $adminUser->created_by)->paginate($perpage);
+        }
+        return UserListResource::collection($users);
     }
 
     /**
