@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdminUserStoreRequest;
 use App\Http\Requests\AdminUserUpdateRequest;
 use App\Http\Resources\UserListResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -68,9 +69,12 @@ class AdminUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return response()->json([
+            'message' => 'Info User',
+            'data' => new UserResource($user)
+        ], 200);
     }
 
     /**
@@ -99,7 +103,7 @@ class AdminUserController extends Controller
         }
 
         return response()->json([
-            'message'=>'Usuario actualizado'
+            'message' => 'Usuario actualizado'
         ], 200);
     }
 
@@ -125,7 +129,7 @@ class AdminUserController extends Controller
         }
 
         return response()->json([
-            'message'=>'Usuario eliminado'
+            'message' => 'Usuario eliminado'
         ], 200);
     }
 }
