@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\RefreshTokenRepository;
 use Laravel\Passport\TokenRepository;
@@ -48,7 +49,7 @@ class TokenController extends Controller
             throw new HttpResponseException(response()->json($contentResponse, $response->getStatusCode())->withoutCookie($this->refresh_token_cookie_name));
         }
 
-        return response()->json($contentResponse, 200)->withCookie(cookie($this->refresh_token_cookie_name, $response->refresh_token, $this->refresh_token_exp_time));
+        return response()->json(Arr::except($contentResponse, ['refresh_token']), 200)->withCookie(cookie($this->refresh_token_cookie_name, $contentResponse['refresh_token'], $this->refresh_token_exp_time));
     }
 
     public function logout(Request $request)
