@@ -16,7 +16,7 @@ class ActiveRoleResource extends JsonResource
     {
         return [
             'role' => new RoleResource($this),
-            'permisions' => UserPermissionsResource::collection($this->permissions)
+            'permissions' => UserPermissionsResource::collection($this->permissions)
         ];
     }
 }
