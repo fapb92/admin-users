@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AssignRoleRequest;
 use App\Http\Requests\RemoveRoleRequest;
+use App\Http\Resources\RoleListResource;
 use App\Models\Role;
 use App\Http\Resources\RoleResource;
 use App\Models\User;
@@ -30,7 +31,7 @@ class RoleController extends Controller
         }
         return response()->json([
             'message' => 'Roles',
-            'data' => RoleResource::collection($roles->get())
+            'data' => RoleListResource::collection($roles->get())
         ], 200);
     }
 
