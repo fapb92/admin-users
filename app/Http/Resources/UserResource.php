@@ -14,7 +14,6 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        $role = $this->getActiveRole();
         return [
             'id' => $this->id,
             "name" => $this->name,
@@ -22,7 +21,6 @@ class UserResource extends JsonResource
             "register_at" => $this->created_at,
             "last_update" => $this->updated_at,
             "avatar_url" => $this->avatar_url,
-            "role_permission_data" => !!$role ? new ActiveRoleResource($role) : null
         ];
     }
 }
