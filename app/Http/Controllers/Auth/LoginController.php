@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\ActiveRoleResource;
+use App\Http\Resources\RoleResource;
+use App\Http\Resources\UserPermissionsResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\ClientRepository;
@@ -58,12 +61,15 @@ class LoginController extends Controller
         ];
         $response = $this->getToken($body);
 
+        $role = $user->getActiveRole();
         return response()->json([
             'status' => 1,
             'message' => 'Inicio de sesión correcto',
             'token_type' => $response->token_type,
             'expires_in' => $response->expires_in,
             'access_token' => $response->access_token,
+            'role' => !!$role ? new RoleResource($role) : null,
+            'permissions' => !!$role ?  UserPermissionsResource::collection($role->permissions) : null
         ], 200)->withCookie(cookie('refresh_token', $response->refresh_token, $this->refresh_token_exp_time));
     }
 

@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RoleResource;
+use App\Http\Resources\UserPermissionsResource;
+use App\Models\User;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -35,6 +40,14 @@ class TokenController extends Controller
         $token = $request->cookie('refresh_token');
         $client = $this->clientRepository->find($this->password_client_id);
 
+        $token_decrypted = $this->decryptRefreshToken($token);
+
+        if (array_key_exists('error', $token_decrypted)) {
+            return response()->json([
+                'message' => $token_decrypted['message']
+            ], 200, $token_decrypted['status']);
+        }
+
         $body = [
             'grant_type' => 'refresh_token',
             'refresh_token' => $token,
@@ -49,7 +62,16 @@ class TokenController extends Controller
             throw new HttpResponseException(response()->json($contentResponse, $response->getStatusCode())->withoutCookie($this->refresh_token_cookie_name));
         }
 
-        return response()->json(Arr::except($contentResponse, ['refresh_token']), 200)->withCookie(cookie($this->refresh_token_cookie_name, $contentResponse['refresh_token'], $this->refresh_token_exp_time));
+        $user = User::where('id', $token_decrypted['user_id'])->first();
+
+        $role = $user->getActiveRole();
+
+        $responseBody = Arr::except($contentResponse, ['refresh_token']);
+
+        $responseBody['role'] = !!$role ? new RoleResource($role) : null;
+        $responseBody['permissions'] = !!$role ?  UserPermissionsResource::collection($role->permissions) : null;
+
+        return response()->json($responseBody, 200)->withCookie(cookie($this->refresh_token_cookie_name, $contentResponse['refresh_token'], $this->refresh_token_exp_time));
     }
 
     public function logout(Request $request)
@@ -64,5 +86,16 @@ class TokenController extends Controller
         return response()->json([
             'message' => "Se cerró sesión exitosamente",
         ])->withoutCookie($this->refresh_token_cookie_name);
+    }
+
+    protected function decryptRefreshToken($token)
+    {
+        try {
+            $enc_key = base64_decode(substr(config('app.key'), 7));
+            $decrypt_ref_token = Crypto::decryptWithPassword($token, $enc_key);
+            return json_decode($decrypt_ref_token, true);
+        } catch (WrongKeyOrModifiedCiphertextException $ex) {
+            return ['message' => "invalid token", 'status' => 403];
+        }
     }
 }
