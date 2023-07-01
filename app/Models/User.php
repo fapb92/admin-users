@@ -74,7 +74,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function getActiveRole()
     {
         if (!$role = $this->roles()->wherePivot('active', true)->first()) {
-            $this->roles()->updateExistingPivot($this->roles[0]->id, ['active' => true]);
+            $role = $this->roles()->first();
+            if (!$role) {
+                return null;
+            }
+            $this->roles()->updateExistingPivot($role->id, ['active' => true]);
             $role = $this->getActiveRole();
         }
         return $role;

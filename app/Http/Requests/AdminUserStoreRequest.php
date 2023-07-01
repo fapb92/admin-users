@@ -34,8 +34,12 @@ class AdminUserStoreRequest extends FormRequest
                 'exists:roles,key',
                 function (string $attribute, mixed $value, Closure $fail) {
                     $rolToAdd = Role::firstWhere('key', $value);
-                    $user = $this->user();
-                    if ($rolToAdd->priority < $user->getActiveRole()->priority) {
+                    if ($rolToAdd) {
+                        $user = $this->user();
+                        if ($rolToAdd->priority < $user->getActiveRole()->priority) {
+                            $fail("The {$attribute} is invalid.");
+                        }
+                    } else {
                         $fail("The {$attribute} is invalid.");
                     }
                 },

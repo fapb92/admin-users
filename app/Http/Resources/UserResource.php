@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             "register_at" => $this->created_at,
             "last_update" => $this->updated_at,
             "avatar_url" => $this->avatar_url,
-            "role_permission_data"=>new ActiveRoleResource($role)
+            "role_permission_data" => !!$role ? new ActiveRoleResource($role) : null
         ];
     }
 }
