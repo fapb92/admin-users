@@ -1,5 +1,7 @@
 # Instalación
 
+- Ubicación del [front](https://github.com/fapb92/admin-users-front)
+
 copiar y pegar .env.example en un nuevo archivo .env
 
 -   crear una base de datos para el programa
