@@ -16,7 +16,7 @@ composer install
 
 ```sh
 php artisan optimize:clear
-php artisan migrate
+php artisan migrate --seed
 php artisan passport:install
 ```
 
