@@ -23,6 +23,8 @@ class RegisterController extends Controller
             ], 400);
         }
 
+        $user->newSuperAdmin();
+
         event(new Registered($user));
 
         return response()->json([
